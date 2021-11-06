@@ -1,3 +1,4 @@
+from bs4.element import ResultSet
 import requests
 from bs4 import BeautifulSoup
 import matplotlib.pyplot as plt
@@ -11,6 +12,8 @@ city = input("Enter a city name: ")
 
 website = 'https://' + str(city) + '.craigslist.org/d/cars-trucks/search/cta'
 print(website)
+prices = []
+titles = []
 
 def getPrice(website):
     craigslist = requests.get(website)
@@ -24,18 +27,33 @@ def getPrice(website):
     while count > 0:
         craigslist = requests.get(website)
         results.append(s.findAll('li', class_='result-row')) 
-        sys.stdout = open('wayne.html', 'w')
-        print(len(results))
+
+        for result in s.findAll('li', class_='result-row'):
+            price = result.find(class_='result-price').contents
+            title = result.find(class_='result-title hdrlnk').contents
+            print(title)
+            prices.append(price)
+            titles.append(titles)
+
         count -= 120
         page += 120
-        print(count)
         website = 'https://' + str(city) + '.craigslist.org/d/cars-trucks/search/cta?s=' + str(page) 
     return results
 
-def printList(results):
+#def createMap():
+    #index = 0
+    #map = dict({})
+    #for title in titles:
+        #map[title] = prices[index]
+        #index += 1
+    #return map
+        
 
-    for result in results:
-        print(result)
 
 results = getPrice(website)
-printList(results)
+#map = createMap()
+sys.stdout = open('wayne.html', 'w')
+
+#for i in range(len(results)):
+    #print(titles[i])
+    #print(prices[i])
