@@ -5,18 +5,30 @@ import numpy as np
 import pandas as pd
 import operator
 from functools import reduce
+import sys
 
+city = input("Enter a city name: ")
 
-website = 'https://www.facebook.com/marketplace/category/vehicles'
+website = 'https://' + str(city) + '.craigslist.org/d/cars-trucks/search/cta'
+print(website)
 
 def getPrice(website):
-    facebook = requests.get(website)
+    craigslist = requests.get(website)
     # print(yahoo.text[0:500]) #Shows the first 500 words of the html of the site
 
     #reads the html and makes sense of the structure
-    s = BeautifulSoup(facebook.text, 'html.parser') 
+    s = BeautifulSoup(craigslist.text, 'html.parser') 
     #finds all the span sections with the class attribute equal to what is listed
-    result = s.find('span', attrs={'class':'Trsdu(0.3s) Fw(b) Fz(36px) Mb(-4px) D(ib)'}) 
-    #print(len(result)) #prints how many span sections found that fit the description
-    price = result.text
-    return price
+    results = s.findAll('li', class_='result-row') 
+    sys.stdout = open('test.html', 'w')
+    print(len(results)) #prints how many span sections found that fit the description
+    #price = result.text
+    return results
+
+def printList(results):
+
+    for result in results:
+        print(result)
+
+results = getPrice(website)
+printList(results)
