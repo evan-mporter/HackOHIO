@@ -1,2 +1,0 @@
-print('tiki')
-print('dweeb')
