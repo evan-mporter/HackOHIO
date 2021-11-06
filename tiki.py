@@ -1,0 +1,2 @@
+print('tiki')
+print('dweeb')
