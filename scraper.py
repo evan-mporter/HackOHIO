@@ -15,6 +15,7 @@ print(website)
 prices = []
 titles = []
 
+
 def getPrice(website):
     craigslist = requests.get(website)
     s = BeautifulSoup(craigslist.text, 'html.parser') 
@@ -23,17 +24,25 @@ def getPrice(website):
     print(count)
     page = 0
     results = []
+    sys.stdout = open('wayne.html', 'w')
     #finds all the span sections with the class attribute equal to what is listed
     while count > 0:
         craigslist = requests.get(website)
-        results.append(s.findAll('li', class_='result-row')) 
+        #results.append(s.findAll('li', class_='result-row'))
+        listings = s.findAll('li', class_='result-row')
 
-        for result in s.findAll('li', class_='result-row'):
+        for result in listings:
             price = result.find(class_='result-price').contents
             title = result.find(class_='result-title hdrlnk').contents
-            print(title)
+            #print(title)
             prices.append(price)
             titles.append(titles)
+            try: 
+                print(title, 'PRICE: ', price)
+            except UnicodeEncodeError:
+                print('ERROR: Cannot Encode Character(s) in Title')
+
+            
 
         count -= 120
         page += 120
@@ -52,7 +61,6 @@ def getPrice(website):
 
 results = getPrice(website)
 #map = createMap()
-sys.stdout = open('wayne.html', 'w')
 
 #for i in range(len(results)):
     #print(titles[i])
