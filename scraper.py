@@ -7,6 +7,7 @@ import pandas as pd
 import operator
 from functools import reduce
 import sys
+import sqlite3
 
 city = input("Enter a city name: ")
 
@@ -65,3 +66,16 @@ results = getPrice(website)
 #for i in range(len(results)):
     #print(titles[i])
     #print(prices[i])
+
+connection = sqlite3.connect('craigslist.db')
+cursor = connection.cursor()
+#cursor.execute('CREATE TABLE listings(listing TEXT, price INT)')
+#connection.commit()
+
+#cursor.execute("INSERT INTO listings VALUES('Tiki', 1000)")
+#connection.commit()
+
+cursor.execute('SELECT * FROM listings')
+data = cursor.fetchall()
+sys.stdout = sys.__stdout__
+print(data)
