@@ -16,6 +16,12 @@ print(website)
 prices = []
 titles = []
 
+#connects to database and creates table if it doesn't already exist
+connection = sqlite3.connect('craigslist.db')
+cursor = connection.cursor()
+cursor.execute("DROP TABLE IF EXISTS listings")
+cursor.execute("CREATE TABLE listings (listing TEXT, price REAL);")
+
 
 def getPrice(website):
     craigslist = requests.get(website)
@@ -33,12 +39,19 @@ def getPrice(website):
         listings = s.findAll('li', class_='result-row')
 
         for result in listings:
+            #gets the listing names and prices
             price = result.find(class_='result-price').contents
             title = result.find(class_='result-title hdrlnk').contents
-            #print(title)
-            prices.append(price)
+            #makes the prices into floats
+            price[0] = price[0].replace('$', '').replace(',', '') 
+            fixed_price = float(price[0])
+            #inserts listing names and prices into sql database
+            cursor.execute("INSERT INTO listings VALUES (?, ?);", (title[0], fixed_price))
+            connection.commit()
+            prices.append(fixed_price)
             titles.append(titles)
             try: 
+
                 print(title, 'PRICE: ', price)
             except UnicodeEncodeError:
                 print('ERROR: Cannot Encode Character(s) in Title')
@@ -66,16 +79,3 @@ results = getPrice(website)
 #for i in range(len(results)):
     #print(titles[i])
     #print(prices[i])
-
-connection = sqlite3.connect('craigslist.db')
-cursor = connection.cursor()
-#cursor.execute('CREATE TABLE listings(listing TEXT, price INT)')
-#connection.commit()
-
-#cursor.execute("INSERT INTO listings VALUES('Tiki', 1000)")
-#connection.commit()
-
-cursor.execute('SELECT * FROM listings')
-data = cursor.fetchall()
-sys.stdout = sys.__stdout__
-print(data)
